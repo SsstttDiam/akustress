@@ -1,42 +1,52 @@
-import pandas as pd
+import streamlit as st
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report
 import joblib
 
-np.random.seed(42)
-n_samples = 200
-df = pd.DataFrame({
-    'StressLevel': np.random.randint(1, 6, n_samples),
-    'SleepQuality': np.random.randint(1, 6, n_samples),
-    'AcademicPressure': np.random.randint(1, 6, n_samples),
-    'SocialSupport': np.random.randint(1, 6, n_samples),
-    'PhoneUsageHours': np.random.normal(5, 1.5, n_samples)
-})
+model = joblib.load("mentalhealth_model.pkl")
+scaler = joblib.load("scaler.pkl")
 
-df['Depression'] = (
-    (df['StressLevel'] > 3) & 
-    (df['AcademicPressure'] > 3) & 
-    (df['SocialSupport'] < 3)
-).astype(int)
+st.set_page_config(page_title="Prediksi Depresi Mahasiswa", layout="centered")
+st.title("🧠 Prediksi Risiko Depresi Mahasiswa")
+st.markdown(
+    """
+    Aplikasi ini digunakan untuk memprediksi apakah seorang mahasiswa **berpotensi mengalami depresi**
+    berdasarkan lima indikator utama:
+    
+    - Tingkat stres  
+    - Kualitas tidur  
+    - Tekanan akademik  
+    - Dukungan sosial  
+    - Durasi penggunaan HP per hari
+    """
+)
 
-X = df[['StressLevel', 'SleepQuality', 'AcademicPressure', 'SocialSupport', 'PhoneUsageHours']]
-y = df['Depression']
+with st.form("mental_health_form"):
+    st.subheader("📋 Masukkan Data Mahasiswa:")
+    
+    stress = st.slider("1️⃣ Tingkat Stres", 1, 5, 3)
+    sleep = st.slider("2️⃣ Kualitas Tidur", 1, 5, 3)
+    academic = st.slider("3️⃣ Tekanan Akademik", 1, 5, 3)
+    social = st.slider("4️⃣ Dukungan Sosial", 1, 5, 3)
+    phone = st.number_input("5️⃣ Durasi Penggunaan HP per Hari (jam)", min_value=0.0, max_value=24.0, value=5.0, step=0.1)
 
-scaler = MinMaxScaler()
-X_scaled = scaler.fit_transform(X)
+    submitted = st.form_submit_button("🔍 Prediksi")
 
-X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+if submitted:
+    input_data = np.array([[stress, sleep, academic, social, phone]])
+    input_scaled = scaler.transform(input_data)
+    prediction = model.predict(input_scaled)[0]
 
-model = RandomForestClassifier(random_state=42)
-model.fit(X_train, y_train)
+    st.subheader("📢 Hasil Prediksi:")
+    if prediction == 1:
+        st.error("⚠️ Mahasiswa **berpotensi mengalami depresi**. Disarankan untuk mendapatkan perhatian dan dukungan yang tepat.")
+    else:
+        st.success("✅ Mahasiswa **tidak berpotensi mengalami depresi**. Tetap jaga kesehatan mental!")
 
-y_pred = model.predict(X_test)
-acc = accuracy_score(y_test, y_pred)
-print("Akurasi:", round(acc * 100, 2), "%")
-print(classification_report(y_test, y_pred))
-
-joblib.dump(model, "mentalhealth_model.pkl")
-joblib.dump(scaler, "scaler.pkl")
+    st.markdown("### 🔎 Data yang Dimasukkan:")
+    st.json({
+        "Tingkat Stres": stress,
+        "Kualitas Tidur": sleep,
+        "Tekanan Akademik": academic,
+        "Dukungan Sosial": social,
+        "Durasi HP (jam/hari)": phone
+    })
