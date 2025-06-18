@@ -4,7 +4,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
-from imblearn.over_sampling import SMOTE
 import joblib
 
 np.random.seed(42)
@@ -29,10 +28,7 @@ y = df['Depression']
 scaler = MinMaxScaler()
 X_scaled = scaler.fit_transform(X)
 
-smote = SMOTE(random_state=42)
-X_res, y_res = smote.fit_resample(X_scaled, y)
-
-X_train, X_test, y_train, y_test = train_test_split(X_res, y_res, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
 model = RandomForestClassifier(random_state=42)
 model.fit(X_train, y_train)
