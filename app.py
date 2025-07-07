@@ -23,11 +23,11 @@ st.markdown(
 with st.form("mental_health_form"):
     st.subheader("📋 Masukkan Data Mahasiswa:")
     
-    stress = st.slider("1️⃣ Tingkat Stres", 1, 5, 3)
-    sleep = st.slider("2️⃣ Kualitas Tidur", 1, 5, 3)
-    academic = st.slider("3️⃣ Tekanan Akademik", 1, 5, 3)
-    social = st.slider("4️⃣ Dukungan Sosial", 1, 5, 3)
-    phone = st.number_input("5️⃣ Durasi Penggunaan HP per Hari (jam)", min_value=0.0, max_value=24.0, value=5.0, step=0.1)
+    stress = st.slider("1️⃣ StudyStressLevel", 1, 5, 3)
+    sleep = st.slider("2️⃣ SleepQuality", 1, 5, 3)
+    academic = st.slider("3️⃣ AcademicEngagement", 1, 5, 3)
+    social = st.slider("4️⃣ SpecialistTreatment", 1, 5, 3)
+    phone = st.number_input("5️⃣ SymptomFrequency_Last7Days", min_value=0.0, max_value=24.0, value=5.0, step=0.1)
 
     submitted = st.form_submit_button("🔍 Prediksi")
 
