@@ -41,12 +41,3 @@ if submitted:
         st.error("⚠️ Mahasiswa **berpotensi mengalami depresi**. Disarankan untuk mendapatkan perhatian dan dukungan yang tepat.")
     else:
         st.success("✅ Mahasiswa **tidak berpotensi mengalami depresi**. Tetap jaga kesehatan mental!")
-
-    st.markdown("### 🔎 Data yang Dimasukkan:")
-    st.json({
-        "Tingkat Stres": stress,
-        "Kualitas Tidur": sleep,
-        "Tekanan Akademik": academic,
-        "Dukungan Sosial": social,
-        "Durasi HP (jam/hari)": phone
-    })
